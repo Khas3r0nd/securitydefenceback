@@ -1,9 +1,18 @@
 const { Pool } = require('pg');
+const { parse } = require('pg-connection-string')
 
-module.exports = new Pool({
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT
-});
+const productionConfig = parse(process.env.DATABASE_URL + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory");
+
+productionConfig.ssl = {
+  rejectUnauthorized: false
+}
+
+const devConfig = {connectionString: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`
+};
+
+// const productionConfig = process.env.DATABASE_URL + "?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
+
+// module.exports = new Pool({
+//   connectionString: process.env.NODE_ENV === "production" ? productionConfig : devConfig,
+// });
+module.exports = new Pool(process.env.NODE_ENV === "production" ? productionConfig : devConfig);

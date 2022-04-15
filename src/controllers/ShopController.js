@@ -64,7 +64,8 @@ class ShopController {
       const { img } = req.files;
       console.log("Image " + img.name);
       let fileName = `${uuid.v4()}${img.name}`;
-      img.mv(path.resolve(__dirname, '..', 'static', fileName));
+      await img.mv(path.resolve(__dirname, '..', 'static', fileName));
+      // img.mv(path.join(__dirname + '../static/' + fileName));
       const newProduct = await Shop.create({ name, description, price, is_available, fileName });
       res.json({
         success: true,
